@@ -3,6 +3,7 @@ const paths = {
   dashboard: "dashboard",
   newProjectPath: "/dashboard/project/new",
   newProject: "dashboard/project/new",
+  newEnv: "new/env",
   signInPath: "/sign-in",
   signIn: "sign-in",
   signUpPath: "/sign-up",

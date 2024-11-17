@@ -20,7 +20,8 @@ export default async function Signup(props: { searchParams: Promise<any> }) {
     <>
       <form
         className="flex flex-col min-w-64 max-w-64 mx-auto"
-        action={signUpAction}
+        // TODO use react-query
+        action={signUpAction as any}
       >
         <h1 className="text-2xl font-medium">Sign up</h1>
         <p className="text-sm text text-foreground">

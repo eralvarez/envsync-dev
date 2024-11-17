@@ -4,24 +4,27 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { Button, Stack, Box } from "@mui/material";
 import { useMutation, useQueryClient } from "react-query";
+import { PageContainer } from "@toolpad/core";
 
 import FormFactory from "components/FormFactory";
-import { createProjectAction } from "actions/project";
+import { createProjectEnvAction } from "actions/projectEnv";
 import { useRouter } from "next/navigation";
 import PATHS from "constants/paths";
 import QUERY_KEYS from "constants/queryKeys";
-import { PageContainer } from "@toolpad/core";
 
 const validationSchema = yup.object({
   name: yup.string().required(),
-  description: yup.string(),
 });
 
-export default function NewProjectPage() {
+interface NewEnvPageProps {
+  projectId: string;
+}
+
+export default function NewEnvPage({ projectId }: NewEnvPageProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { mutate: createProjectActionMutation, isLoading } = useMutation(
-    createProjectAction,
+  const { mutate: createProjectEnvActionMutation, isLoading } = useMutation(
+    createProjectEnvAction,
     {
       onSuccess: ({ error }) => {
         if (Boolean(error)) {
@@ -37,11 +40,10 @@ export default function NewProjectPage() {
   const formik = useFormik({
     initialValues: {
       name: "",
-      description: "",
     },
     validationSchema,
     onSubmit: (formData) => {
-      createProjectActionMutation(formData);
+      createProjectEnvActionMutation({ name: formData.name, projectId });
     },
   });
 
@@ -65,11 +67,6 @@ export default function NewProjectPage() {
                 type: "text",
                 label: "Name",
               },
-              {
-                name: "description",
-                type: "textarea",
-                label: "Description",
-              },
             ]}
             formik={formik}
             validationSchema={validationSchema}
@@ -82,7 +79,7 @@ export default function NewProjectPage() {
               onClick={formik.submitForm}
               disabled={isLoading}
             >
-              Create project
+              Create environment
             </Button>
           </Stack>
         </Stack>

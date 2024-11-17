@@ -71,8 +71,8 @@ export default function TableDataRow({
         mode="EDIT"
         envVar={editForm[0]}
         envVarValue={editForm[1]}
-        onChange={(...args) => {
-          setEditForm(args);
+        onChange={([envVar, value]) => {
+          setEditForm([envVar, value]);
         }}
         onCancel={() => {
           setMode("VIEW");
