@@ -1,3 +1,4 @@
+"use client";
 // import {
 //   Box,
 //   Button,
@@ -113,9 +114,17 @@ export default function FormFactory({
       case "text": {
         return (
           <Stack direction="column" key={inputConfig.label} spacing={1}>
-            <InputLabel htmlFor={inputConfig.name} error={hasError}>
-              <Typography variant="body2">{inputConfig.label}</Typography>
+            <InputLabel
+              htmlFor={inputConfig.name}
+              error={hasError}
+              sx={{
+                fontSize: "0.875rem",
+              }}
+              required={isRequired}
+            >
+              {inputConfig.label}
             </InputLabel>
+
             <TextField
               required={isRequired}
               id={inputConfig.name}
@@ -243,7 +252,51 @@ export default function FormFactory({
         //     />
         //   </Stack>
         // );
-        return null;
+        return (
+          <Stack direction="column" key={inputConfig.label} spacing={1}>
+            <InputLabel
+              htmlFor={inputConfig.name}
+              error={hasError}
+              sx={{
+                fontSize: "0.875rem",
+              }}
+              required={isRequired}
+            >
+              {inputConfig.label}
+            </InputLabel>
+
+            <TextField
+              required={isRequired}
+              id={inputConfig.name}
+              name={inputConfig.name}
+              type="text"
+              multiline
+              rows={4}
+              variant="outlined"
+              size="small"
+              value={formik.values[inputConfig.name]}
+              placeholder={inputConfig.placeholder ?? ""}
+              onChange={(event) => {
+                const inputValue = event.target.value;
+                formik.handleChange(event);
+
+                if (!isUndefined(onChange)) {
+                  onChange(inputConfig.name, inputValue);
+                }
+              }}
+              slotProps={{
+                inputLabel: { shrink: true },
+                formHelperText: { sx: { marginLeft: 0 } },
+              }}
+              helperText={
+                hasError
+                  ? ((formik.errors[inputConfig.name] as string) ?? "")
+                  : (inputConfig.helperText ?? "")
+              }
+              error={hasError}
+            />
+          </Stack>
+        );
       case "boolean": {
         return (
           <label className="block" key={inputConfig.label}>

@@ -32,7 +32,7 @@ const signUpAction = async (formData: FormData) => {
     return encodedRedirect(
       "success",
       PATHS.signUpPath,
-      "Thanks for signing up! Please check your email for a verification link."
+      "Thanks for signing up! Please check your email for a verification link.",
     );
   }
 };
@@ -82,7 +82,7 @@ const forgotPasswordAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       PATHS.forgotPasswordPath,
-      "Email is required"
+      "Email is required",
     );
   }
 
@@ -95,7 +95,7 @@ const forgotPasswordAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       PATHS.forgotPasswordPath,
-      "Could not reset password"
+      "Could not reset password",
     );
   }
 
@@ -106,7 +106,7 @@ const forgotPasswordAction = async (formData: FormData) => {
   return encodedRedirect(
     "success",
     PATHS.forgotPasswordPath,
-    "Check your email for a link to reset your password."
+    "Check your email for a link to reset your password.",
   );
 };
 
@@ -120,7 +120,7 @@ const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect(
       "error",
       PATHS.resetPasswordPath,
-      "Password and confirm password are required"
+      "Password and confirm password are required",
     );
   }
 

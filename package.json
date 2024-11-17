@@ -8,8 +8,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "supabase:start": "supabase start",
-    "supabase:stop": "supabase stop"
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:migration": "supabase db diff --local -f",
+    "db:reset": "supabase db reset --local",
+    "db:push": "supabase db push"
   },
   "dependencies": {
     "@emotion/cache": "^11.13.1",

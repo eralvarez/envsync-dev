@@ -1,59 +1,63 @@
-// "use client";
+"use client";
 
-// import { Suspense, useMemo, useState } from "react";
-import { Suspense } from "react";
-import {
-  // AppProvider,
-  type Session,
-  type Navigation,
-} from "@toolpad/core/AppProvider";
-// import { AppProvider } from "@toolpad/core/nextjs";
+import { Suspense, useState } from "react";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import CloudQueueIcon from "@mui/icons-material/CloudQueue";
+import { useQuery } from "react-query";
 
+import PATHS from "constants/paths";
 import navigation from "./navigation";
 import AppProvider from "components/toolpad/AppProvider";
-
-// const signIn = () => {};
-// const authFunctions = { signIn, signOut: () => {} };
+import theme from "constants/theme";
+import QUERY_KEYS from "constants/queryKeys";
+import { Navigation } from "types/toolpad";
+import { getAllProjectsAction } from "actions/project";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  // const [session, setSession] = useState<Session | null>({
-  //   user: {
-  //     name: "Bharat Kashyap",
-  //     email: "bharatkashyap@outlook.com",
-  //     image: "https://avatars.githubusercontent.com/u/19550456",
-  //   },
-  // });
-  // const authentication = useMemo(() => {
-  //   return {
-  //     signIn: () => {
-  //       setSession({
-  //         user: {
-  //           name: "Bharat Kashyap",
-  //           email: "bharatkashyap@outlook.com",
-  //           image: "https://avatars.githubusercontent.com/u/19550456",
-  //         },
-  //       });
-  //     },
-  //     signOut: () => {
-  //       setSession(null);
-  //     },
-  //   };
-  // }, []);
+  const [projectsNavigation, setProjectsNavigation] = useState<Navigation[]>(
+    []
+  );
+  useQuery([QUERY_KEYS.getAllProjects], () => getAllProjectsAction(), {
+    onSuccess({ data: projects, error }) {
+      if (!Boolean(error)) {
+        setProjectsNavigation(() => {
+          const newProjectsNavigation: Navigation[] = [];
+
+          projects?.forEach((project) => {
+            newProjectsNavigation.push({
+              segment: `${PATHS.dashboard}/project/${project.id}`,
+              title: project.name,
+              icon: <FolderOpenIcon />,
+              children: project.project_envs.map((env) => {
+                return {
+                  segment: env.id,
+                  title: env.name,
+                  icon: <CloudQueueIcon />,
+                };
+              }),
+            });
+          });
+
+          return newProjectsNavigation;
+        });
+      }
+    },
+  });
 
   return (
     <Suspense>
       <AppProvider
-        navigation={navigation}
+        theme={theme}
+        navigation={[...navigation, ...projectsNavigation]}
         session={{
           user: {
-            name: "Bharat Kashyap",
-            email: "bharatkashyap@outlook.com",
+            name: "Test test",
+            email: "eaea@outlook.com",
             image: "https://avatars.githubusercontent.com/u/19550456",
           },
         }}
-        // authentication={authFunctions}
       >
         <DashboardLayout
           slotProps={{
