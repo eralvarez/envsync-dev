@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Stack, Typography } from "@mui/material";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
 import {
   Table,
   TableBody,
@@ -13,6 +13,8 @@ import InfoIcon from "@mui/icons-material/Info";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { PageContainer, PageContainerToolbar } from "@toolpad/core";
 import { useRouter } from "next/navigation";
+import FingerprintIcon from "@mui/icons-material/Fingerprint";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import TableRowForm from "./TableRowForm";
 import TableDataRow from "./TableDataRow";
@@ -73,17 +75,24 @@ export default function ProjectEnvPage({
   const getPageToolbar = () => {
     return (
       <PageContainerToolbar>
-        <Button
+        <IconButton
+          onClick={() => {
+            navigator.clipboard.writeText(`${projectId}:${projectEnvId}`);
+            alert("Environment id has beed copied to clipboard");
+          }}
+        >
+          <FingerprintIcon />
+        </IconButton>
+        <IconButton
           color="error"
-          variant="contained"
           onClick={() => {
             if (confirm("Are you sure you want to delete this env?")) {
               deleteProjectEnvActionMutation({ projectId, projectEnvId });
             }
           }}
         >
-          Delete env
-        </Button>
+          <DeleteIcon />
+        </IconButton>
       </PageContainerToolbar>
     );
   };
