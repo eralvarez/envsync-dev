@@ -26,12 +26,18 @@ const getAllProjectEnvVarsAction = async ({
         .eq("project_id", projectId)
         .eq("project_env_id", projectEnvId);
 
+    const envVars: any[] = [];
+
+    projectEnvVars?.forEach((envVar) => {
+      const decryptedValue = decryptString(envVar.value);
+      envVars.push({
+        ...envVar,
+        value: decryptedValue,
+      });
+    });
+
     return {
-      data:
-        projectEnvVars?.map((envVar) => ({
-          ...envVar,
-          value: decryptString(envVar.value),
-        })) ?? [],
+      data: envVars ?? [],
       error: getProjectEnvVarsError,
     };
   } catch (error) {
@@ -64,16 +70,21 @@ const createProjectEnvVarAction = async ({
   try {
     const supabase = await createClient();
 
+    const valuesToInsert: any[] = [];
+    envVars.forEach(async ([envVar, value]) => {
+      const encryptedValue = await encryptString(value);
+
+      valuesToInsert.push({
+        env_var: envVar,
+        value: encryptedValue,
+        project_id: projectId,
+        project_env_id: projectEnvId,
+      });
+    });
+
     const { error: createProjectEnvVarsError } = await supabase
       .from("project_env_var")
-      .insert(
-        envVars.map(([envVar, value]) => ({
-          env_var: envVar,
-          value: encryptString(value),
-          project_id: projectId,
-          project_env_id: projectEnvId,
-        }))
-      );
+      .insert(valuesToInsert);
 
     return {
       data: null,
@@ -153,11 +164,13 @@ const editProjectEnvVarAction = async ({
   try {
     const supabase = await createClient();
 
+    const envVarValue = await encryptString(projectEnvVar.value);
+
     const { error: editProjectEnvVarsError } = await supabase
       .from("project_env_var")
       .update({
         env_var: projectEnvVar.env_var,
-        value: encryptString(projectEnvVar.value),
+        value: envVarValue,
       })
       .eq("project_id", projectId)
       .eq("project_env_id", projectEnvId)

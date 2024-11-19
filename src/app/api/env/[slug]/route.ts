@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "utils/supabase/server";
 import { decryptString } from "services/crypto";
 
+export const runtime = "edge";
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
@@ -24,10 +26,15 @@ export async function GET(
     return NextResponse.json([]);
   }
 
-  return NextResponse.json(
-    projectEnvVars?.map((envVar) => ({
+  const envVars: any[] = [];
+
+  projectEnvVars?.forEach(async (envVar) => {
+    const decryptedValue = await decryptString(envVar.value);
+    envVars.push({
       ...envVar,
-      value: decryptString(envVar.value),
-    }))
-  );
+      value: decryptedValue,
+    });
+  });
+
+  return NextResponse.json(envVars);
 }

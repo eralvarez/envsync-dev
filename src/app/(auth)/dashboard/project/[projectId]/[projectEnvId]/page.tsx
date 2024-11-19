@@ -1,5 +1,7 @@
 import ProjectEnvPage from "./ProjectEnvPage";
 
+export const runtime = "edge";
+
 export default async function ProjectEnvironmentPage({
   params,
 }: {
