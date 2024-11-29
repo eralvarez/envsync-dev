@@ -1,7 +1,14 @@
+const devEnvs = ["development", "dev"];
+const prodEnvs = ["production", "prod"];
+
 const isDevEnv = () =>
-  (process.env.NEXT_PUBLIC_ENVIRONMENT ?? "development") === "development";
+  devEnvs.includes(
+    (process.env.NEXT_PUBLIC_ENVIRONMENT ?? "development").toLowerCase()
+  );
 
 const isProdEnv = () =>
-  (process.env.NEXT_PUBLIC_ENVIRONMENT ?? "production") === "production";
+  prodEnvs.includes(
+    (process.env.NEXT_PUBLIC_ENVIRONMENT ?? "production").toLowerCase()
+  );
 
 export { isDevEnv, isProdEnv };

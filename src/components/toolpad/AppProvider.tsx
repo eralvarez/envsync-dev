@@ -14,49 +14,52 @@ import QUERY_KEYS from "constants/queryKeys";
 import { useQuery } from "react-query";
 import navigation from "app/(auth)/dashboard/navigation";
 import AddIcon from "@mui/icons-material/Add";
+import AuthService from "services/AuthService";
+
+const authService = new AuthService();
 
 export default function CustomAppProvider(props: AppProviderProps) {
   const [projectsNavigation, setProjectsNavigation] = useState<Navigation[]>(
     []
   );
-  useQuery([QUERY_KEYS.getAllProjects], () => getAllProjectsAction(), {
-    onSuccess({ data: projects, error }) {
-      if (!Boolean(error)) {
-        setProjectsNavigation(() => {
-          const newProjectsNavigation: Navigation[] = [];
+  // useQuery([QUERY_KEYS.getAllProjects], () => getAllProjectsAction(), {
+  //   onSuccess({ data: projects, error }) {
+  //     if (!Boolean(error)) {
+  //       setProjectsNavigation(() => {
+  //         const newProjectsNavigation: Navigation[] = [];
 
-          projects?.forEach((project) => {
-            const childrenNavigation = project.project_envs.map((env) => {
-              return {
-                segment: env.id,
-                title: env.name,
-                icon: <CloudQueueIcon />,
-              };
-            });
-            childrenNavigation.push({
-              segment: PATHS.newEnv,
-              title: "New environment",
-              icon: <AddIcon />,
-            });
+  //         projects?.forEach((project) => {
+  //           const childrenNavigation = project.project_envs.map((env) => {
+  //             return {
+  //               segment: env.id,
+  //               title: env.name,
+  //               icon: <CloudQueueIcon />,
+  //             };
+  //           });
+  //           childrenNavigation.push({
+  //             segment: PATHS.newEnv,
+  //             title: "New environment",
+  //             icon: <AddIcon />,
+  //           });
 
-            newProjectsNavigation.push({
-              segment: `${PATHS.dashboard}/project/${project.id}`,
-              title: project.name,
-              icon: <FolderOpenIcon />,
-              children: childrenNavigation,
-            });
-          });
+  //           newProjectsNavigation.push({
+  //             segment: `${PATHS.dashboard}/project/${project.id}`,
+  //             title: project.name,
+  //             icon: <FolderOpenIcon />,
+  //             children: childrenNavigation,
+  //           });
+  //         });
 
-          return newProjectsNavigation;
-        });
-      }
-    },
-  });
+  //         return newProjectsNavigation;
+  //       });
+  //     }
+  //   },
+  // });
   const authentication = useMemo(() => {
     return {
       signIn: () => {},
       signOut: async () => {
-        await signOutAction();
+        await authService.signOut();
       },
     };
   }, []);

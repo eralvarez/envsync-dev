@@ -11,21 +11,23 @@ import {
   Box,
 } from "@mui/material";
 import { useMutation } from "react-query";
+import { useRouter } from "next/navigation";
 
 import FormFactory from "components/FormFactory";
-import { signInAction } from "actions/auth";
-import { useRouter } from "next/navigation";
 import PATHS from "constants/paths";
+import AuthService from "services/AuthService";
 
 const validationSchema = yup.object({
   email: yup.string().email().required(),
   password: yup.string().required(),
 });
 
+const authService = new AuthService();
+
 export default function SignInPage() {
   const router = useRouter();
-  const { mutate: signInActionMutation, isLoading } = useMutation(
-    signInAction,
+  const { mutate: signInMutation, isLoading } = useMutation(
+    authService.signIn,
     {
       onSuccess: ({ error }) => {
         if (Boolean(error)) {
@@ -44,7 +46,7 @@ export default function SignInPage() {
     },
     validationSchema,
     onSubmit: (formData) => {
-      signInActionMutation(formData);
+      signInMutation(formData);
     },
   });
 
@@ -102,7 +104,12 @@ export default function SignInPage() {
                   Sign in
                 </Button>
                 <Button disabled={isLoading}>Forgot Password?</Button>
-                <Button disabled={isLoading}>Have an account? Sign in</Button>
+                <Button
+                  disabled={isLoading}
+                  onClick={() => router.push(PATHS.signUpPath)}
+                >
+                  Don&apos;t have an account? Sign up
+                </Button>
               </Stack>
             </Stack>
           </Stack>

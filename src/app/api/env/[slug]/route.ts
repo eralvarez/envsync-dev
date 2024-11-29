@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "utils/supabase/server";
-import { decryptString } from "services/crypto";
+import { decryptString } from "services/CryptoService";
 
 export async function GET(
   request: Request,

@@ -7,35 +7,35 @@ import { useMutation, useQueryClient } from "react-query";
 import { PageContainer } from "@toolpad/core";
 
 import FormFactory from "components/FormFactory";
-// import { createProjectAction } from "actions/project";
 import { useRouter } from "next/navigation";
 import PATHS from "constants/paths";
 import QUERY_KEYS from "constants/queryKeys";
-import ProjectService, { ProjectDto } from "services/ProjectService";
-import { useRef } from "react";
+import OrganizationService, {
+  OrganizationDto,
+} from "services/OrganizationService";
+import { useAuth } from "contexts/AuthContext";
 
 const validationSchema = yup.object({
   name: yup.string().required(),
-  description: yup.string(),
 });
 
-const projectService = new ProjectService();
+const organizationService = new OrganizationService();
 
 export default function NewProjectPage() {
+  const { user } = useAuth();
   // const { current: projectService } = useRef(new ProjectService());
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { mutate: createProjectMutation, isLoading } = useMutation(
-    projectService.create,
+  const { mutate: createOrganizationMutation, isLoading } = useMutation(
+    organizationService.create,
     {
       onSuccess: ({ data, error }) => {
-        console.log({ data });
-        // if (Boolean(error)) {
-        //   alert("something went wrong, try again");
-        // } else {
-        //   queryClient.invalidateQueries(QUERY_KEYS.getAllProjects);
-        //   router.replace(PATHS.dashboardPath);
-        // }
+        if (Boolean(error)) {
+          alert(error);
+        } else {
+          // queryClient.invalidateQueries(QUERY_KEYS.getAllProjects);
+          router.replace(PATHS.dashboardPath);
+        }
       },
     }
   );
@@ -43,12 +43,14 @@ export default function NewProjectPage() {
   const formik = useFormik({
     initialValues: {
       name: "",
-      description: "",
     },
     validationSchema,
     onSubmit: (formData) => {
-      const newProject = new ProjectDto(formData);
-      createProjectMutation(newProject);
+      const newOrganization = new OrganizationDto({
+        ...formData,
+        members: [user?.uid as string],
+      });
+      createOrganizationMutation(newOrganization);
     },
   });
 
@@ -72,11 +74,6 @@ export default function NewProjectPage() {
                 type: "text",
                 label: "Name",
               },
-              {
-                name: "description",
-                type: "textarea",
-                label: "Description",
-              },
             ]}
             formik={formik}
             validationSchema={validationSchema}
@@ -89,7 +86,7 @@ export default function NewProjectPage() {
               onClick={formik.submitForm}
               disabled={isLoading}
             >
-              Create project
+              Create organization
             </Button>
           </Stack>
         </Stack>

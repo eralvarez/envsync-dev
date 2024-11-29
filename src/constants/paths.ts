@@ -1,8 +1,11 @@
 const paths = {
+  homePath: "/",
   dashboardPath: "/dashboard",
   dashboard: "dashboard",
   newProjectPath: "/dashboard/project/new",
   newProject: "dashboard/project/new",
+  newOrganizationPath: "/dashboard/organization/new",
+  newOrganization: "dashboard/organization/new",
   newEnv: "new/env",
   signInPath: "/sign-in",
   signIn: "sign-in",

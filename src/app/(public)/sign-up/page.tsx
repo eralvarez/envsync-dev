@@ -1,51 +1,120 @@
-import { signUpAction } from "actions/auth";
-// import { FormMessage, Message } from "@/components/form-message";
-// import { SubmitButton } from "@/components/submit-button";
-// import { input } from "@/components/ui/input";
-// import { label } from "@/components/ui/label";
-import Link from "next/link";
-// import { SmtpMessage } from "../smtp-message";
+"use client";
 
-export default async function Signup(props: { searchParams: Promise<any> }) {
-  // const searchParams = await props.searchParams;
-  // if ("message" in searchParams) {
-  //   return (
-  //     <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
-  //       <FormMessage message={searchParams} />
-  //     </div>
-  //   );
-  // }
+import * as yup from "yup";
+import { useFormik } from "formik";
+import {
+  Button,
+  Stack,
+  Typography,
+  Card,
+  CardContent,
+  Box,
+} from "@mui/material";
+import { useMutation } from "react-query";
+import { useRouter } from "next/navigation";
+
+import FormFactory from "components/FormFactory";
+import AuthService from "services/AuthService";
+import PATHS from "constants/paths";
+
+const validationSchema = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+});
+
+const authService = new AuthService();
+
+export default function SignUpPage() {
+  const router = useRouter();
+  const { mutate: signUpMutation, isLoading } = useMutation(
+    authService.signUp,
+    {
+      onSuccess: ({ error }) => {
+        if (Boolean(error)) {
+          alert(error);
+        } else {
+          router.replace(PATHS.dashboardPath);
+        }
+      },
+    }
+  );
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: (formData) => {
+      signUpMutation(formData);
+    },
+  });
 
   return (
-    <>
-      <form
-        className="flex flex-col min-w-64 max-w-64 mx-auto"
-        // TODO use react-query
-        action={signUpAction as any}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <Card
+        elevation={4}
+        sx={(theme) => ({
+          width: 380,
+
+          [theme.breakpoints.down("sm")]: {
+            width: "100%",
+            marginX: 2,
+          },
+        })}
       >
-        <h1 className="text-2xl font-medium">Sign up</h1>
-        <p className="text-sm text text-foreground">
-          Already have an account?{" "}
-          <Link className="text-primary font-medium underline" href="/sign-up">
-            Sign in
-          </Link>
-        </p>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <label htmlFor="email">Email</label>
-          <input name="email" placeholder="you@example.com" required />
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Your password"
-            minLength={6}
-            required
-          />
-          <button type="submit">Sign up</button>
-          {/* <FormMessage message={searchParams} /> */}
-        </div>
-      </form>
-      {/* <SmtpMessage /> */}
-    </>
+        <CardContent>
+          <Stack direction="column" spacing={2}>
+            <Typography variant="h4" align="center">
+              Sign up
+            </Typography>
+
+            <Stack>
+              <FormFactory
+                inputConfigs={[
+                  {
+                    name: "email",
+                    type: "email",
+                    label: "Email",
+                  },
+                  {
+                    name: "password",
+                    type: "password",
+                    label: "Password",
+                  },
+                ]}
+                formik={formik}
+                validationSchema={validationSchema}
+              />
+
+              <Stack direction="column" gap={1}>
+                <Button
+                  variant="contained"
+                  type="button"
+                  onClick={formik.submitForm}
+                  disabled={isLoading}
+                >
+                  Sign up
+                </Button>
+                <Button disabled={isLoading}>Forgot Password?</Button>
+                <Button
+                  disabled={isLoading}
+                  onClick={() => router.push(PATHS.signInPath)}
+                >
+                  Have an account? Sign in
+                </Button>
+              </Stack>
+            </Stack>
+          </Stack>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }

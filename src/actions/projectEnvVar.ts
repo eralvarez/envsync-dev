@@ -3,7 +3,7 @@
 import { createClient } from "utils/supabase/server";
 import { ActionResponse } from "types/actionResponse";
 import { Database } from "types/supabase";
-import { encryptString, decryptString } from "services/crypto";
+import { encryptString, decryptString } from "services/CryptoService";
 
 const getAllProjectEnvVarsAction = async ({
   projectId,

@@ -1,5 +1,15 @@
 import type { NextConfig } from "next";
 
+import { isProdEnv } from "./src/utils/env";
+
+const envCompilerOptions = isProdEnv()
+  ? {
+      removeConsole: {
+        exclude: ["error"],
+      },
+    }
+  : {};
+
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
@@ -15,6 +25,12 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     // typedRoutes: true,
+  },
+  compiler: {
+    ...envCompilerOptions,
+    // removeConsole: {
+    //   exclude: ["error"],
+    // },
   },
 };
 

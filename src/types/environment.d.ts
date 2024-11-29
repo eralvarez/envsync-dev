@@ -4,6 +4,6 @@ namespace NodeJS {
     NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
     SUPABASE_DB_PASSWORD: string;
     SECRET_ENCRYPTION_KEY: string;
-    PROJECT_NAME: string;
+    NEXT_PUBLIC_PROJECT_NAME: string;
   }
 }

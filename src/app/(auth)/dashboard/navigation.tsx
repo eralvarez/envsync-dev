@@ -16,6 +16,15 @@ const navigation: Navigation[] = [
   },
   {
     kind: "header",
+    title: "Organizations",
+  },
+  {
+    segment: PATHS.newOrganization,
+    title: "New org",
+    icon: <AddIcon />,
+  },
+  {
+    kind: "header",
     title: "Projects",
   },
   {
