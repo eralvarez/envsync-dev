@@ -6,12 +6,12 @@ import { browserSessionPersistence, initializeAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB4ie5aQt6h1xzcfay6qwpc1YrTtV741E0",
-  authDomain: "envsyncdev.firebaseapp.com",
-  projectId: "envsyncdev",
-  storageBucket: "envsyncdev.firebasestorage.app",
-  messagingSenderId: "480443630820",
-  appId: "1:480443630820:web:dae06ca5effe85e66898f1",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
