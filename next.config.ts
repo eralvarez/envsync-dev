@@ -25,12 +25,10 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     // typedRoutes: true,
+    reactCompiler: true,
   },
   compiler: {
     ...envCompilerOptions,
-    // removeConsole: {
-    //   exclude: ["error"],
-    // },
   },
 };
 

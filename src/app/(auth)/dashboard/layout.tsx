@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { AppProvider } from "@toolpad/core/nextjs";
 import { DashboardLayout, ThemeSwitcher } from "@toolpad/core/DashboardLayout";
 import {
@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  CircularProgress,
 } from "@mui/material";
 import Image from "next/image";
 import { useQuery } from "react-query";
@@ -18,50 +19,66 @@ import { useAuth } from "contexts/AuthContext";
 import AuthService from "services/AuthService";
 import navigation from "app/(auth)/dashboard/navigation";
 import theme from "constants/theme";
-import OrganizationService from "services/OrganizationService";
+import OrganizationService, {
+  OrganizationDto,
+} from "services/OrganizationService";
 import QUERY_KEYS from "constants/queryKeys";
+import { useOrganization } from "state/organizations";
 
 const organizationService = new OrganizationService();
 
 function ToolbarActionsSearch() {
-  const [age, setAge] = useState("");
-  useQuery(
+  const { user } = useAuth();
+  const { selectedOrganization, setSelectedOrganization } = useOrganization();
+
+  const { data: getOrganizationsResponse, isLoading } = useQuery(
     [QUERY_KEYS.getAllOrganizations],
-    () => organizationService.getAll(),
+    () =>
+      organizationService.getAll({
+        whereConditions: [["members", "array-contains", user?.uid as string]],
+      }),
     {
-      onSuccess: ({ data, error }) => {
-        console.log({ data, error });
-      },
-      onError: (error) => {
-        console.log({ error });
+      onSuccess: ({ data }) => {
+        if ((data ?? []).length > 0 && selectedOrganization === null) {
+          setSelectedOrganization(data?.at(0) as OrganizationDto);
+        }
       },
     }
   );
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
+  const handleOrganizationChange = (event: SelectChangeEvent) => {
+    const org = getOrganizationsResponse?.data.find(
+      (currentOrg) => currentOrg.id === event.target.value
+    ) as OrganizationDto;
+    setSelectedOrganization(org);
   };
 
   return (
-    <Stack direction="row" gap={2}>
-      <FormControl fullWidth variant="outlined">
-        <InputLabel id="demo-simple-select-label" size="small">
-          Organizations
-        </InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={age}
-          label="Organizations"
-          onChange={handleChange}
-          size="small"
-          sx={{ minWidth: 200 }}
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-      </FormControl>
+    <Stack direction="row" alignItems="center" gap={2}>
+      {isLoading ? (
+        <CircularProgress size={30} />
+      ) : (
+        <FormControl fullWidth variant="outlined">
+          <InputLabel id="organization-label" size="small">
+            Organizations
+          </InputLabel>
+
+          <Select
+            labelId="organization-label"
+            value={selectedOrganization?.id ?? ""}
+            label="Organizations"
+            onChange={handleOrganizationChange}
+            size="small"
+            sx={{ minWidth: 200 }}
+          >
+            {getOrganizationsResponse?.data?.map((organizations) => (
+              <MenuItem value={organizations.id} key={organizations.id}>
+                {organizations.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
       <ThemeSwitcher />
     </Stack>
   );

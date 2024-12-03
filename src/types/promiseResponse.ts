@@ -1,5 +1,5 @@
 interface PromiseResponse<DataType = any, ErrorType = any> {
-  data: DataType | null;
+  data: DataType;
   error: ErrorType;
 }
 

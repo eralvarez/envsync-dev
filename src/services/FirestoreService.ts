@@ -33,7 +33,11 @@ import { ObjectSchema, ValidationError, date as yupDate } from "yup";
 
 // type FirestoreEnvironment = "dev" | "stage" | "prod";
 
-type WhereConditions<T> = [keyof T, WhereFilterOp, any];
+type WhereConditions<T> =
+  | [keyof T, WhereFilterOp, keyof T]
+  | [keyof T, WhereFilterOp, string]
+  | [string, WhereFilterOp, keyof T]
+  | [string, WhereFilterOp, string];
 
 interface GetProps<T> {
   whereConditions?: WhereConditions<T>[];
@@ -241,24 +245,26 @@ class FirestoreService<FirestoreDocument> {
   //   return unsubscribe;
   // }
 
-  // async getById(id: string): Promise<FirestoreDocument> {
-  //   try {
-  //     const docRef = doc(this.#firestore, this.#modelName, id);
-  //     const item = await getDoc(docRef);
+  getById = async (
+    id: string
+  ): Promise<PromiseResponse<FirestoreDocument | null>> => {
+    try {
+      const docRef = doc(this.firestore, this.collectionName, id);
+      const item = await getDoc(docRef);
+      let dtoItem: any = null;
 
-  //     return this.#collectionSchema.cast(this.#parseItem(item), {
-  //       stripUnknown: true,
-  //     });
-  //   } catch (error) {
-  //     const errorPayload = JSON.parse(
-  //       JSON.stringify(error, Object.getOwnPropertyNames(error))
-  //     );
-  //     // firebase error
-  //     await this.#logError({ type: "FirebaseError", payload: errorPayload });
+      if (item.exists()) {
+        dtoItem = new this.DocumentDto(item.data());
+      }
 
-  //     throw error;
-  //   }
-  // }
+      return { data: dtoItem, error: null };
+    } catch (error) {
+      console.log("getById error:");
+      console.log(error);
+
+      return { data: null, error };
+    }
+  };
 
   // async getAll(
   //   props?: GetAllProps<FirestoreDocument>
@@ -347,51 +353,33 @@ class FirestoreService<FirestoreDocument> {
   //     throw error;
   //   }
   // }
+  //  props?: GetAllProps<FirestoreDocument>
   getAll = async (
     props?: GetAllProps<FirestoreDocument>
   ): Promise<PromiseResponse<FirestoreDocument[]>> => {
     try {
       const whereConditions = props?.whereConditions || [];
-      const limitBy = props?.limitBy;
-      const pagination = props?.pagination;
-      const showDeleted = props?.showDeleted || false;
+      // const limitBy = props?.limitBy;
+      // const pagination = props?.pagination;
+      // const showDeleted = props?.showDeleted || false;
 
-      const items: FirestoreDocument[] = [];
-      const modelRef = collection(this.firestore, this.collectionName);
-      let queryRef = query(modelRef, orderBy("createdAt", "desc"));
+      // const items: FirestoreDocument[] = [];
+      let collectionRef = query(
+        collection(this.firestore, this.collectionName)
+      );
+      // let collectionRef = query(modelRef, orderBy("createdAt", "desc"));
 
-      if (limitBy !== undefined) {
-        queryRef = query(queryRef, limit(limitBy));
-      }
-
-      // if (
-      //   pagination !== undefined &&
-      //   this.#latestGetAllResponseMap.has(limitBy)
-      // ) {
-      //   const latestGetAllResponse = this.#latestGetAllResponseMap.get(limitBy);
-
-      //   if (pagination === PaginationOptions.NEXT) {
-      //     queryRef = query(
-      //       queryRef,
-      //       startAfter(latestGetAllResponse?.querySnapshot.docs.at(-1)),
-      //       limit(limitBy)
-      //     );
-      //   } else if (pagination === PaginationOptions.PREVIOUS) {
-      //     queryRef = query(
-      //       queryRef,
-      //       endBefore(latestGetAllResponse?.querySnapshot.docs.at(0)),
-      //       limitToLast(limitBy)
-      //     );
-      //   }
+      // if (limitBy !== undefined) {
+      //   queryRef = query(queryRef, limit(limitBy));
       // }
 
-      if (!showDeleted) {
-        queryRef = query(queryRef, where("deletedAt", "==", null));
-      }
+      // if (!showDeleted) {
+      //   queryRef = query(queryRef, where("deletedAt", "==", null));
+      // }
 
       whereConditions.forEach((whereCondition) => {
-        queryRef = query(
-          queryRef,
+        collectionRef = query(
+          collectionRef,
           where(
             whereCondition[0] as string,
             whereCondition[1],
@@ -400,35 +388,33 @@ class FirestoreService<FirestoreDocument> {
         );
       });
       // https://firebase.google.com/docs/firestore/query-data/queries#or_queries
-      const querySnapshot = await getDocs(queryRef);
+      // const querySnapshot = await getDocs(queryRef);
+      // const querySnapshot = await getDocs(
+      //   collection(this.firestore, this.collectionName)
+      // );
+      const querySnapshot = await getDocs(collectionRef);
+      const items: FirestoreDocument[] = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, " => ", doc.data());
+        const dtoItem = new this.DocumentDto({ ...doc.data(), id: doc.id });
+        items.push(dtoItem);
+      });
 
-      // if (querySnapshot.docs.length > 0) {
-      //   this.#latestGetAllResponseMap.set(limitBy, {
-      //     querySnapshot,
-      //   });
-      // } else {
-      //   const lastQuerySnapshot =
-      //     this.#latestGetAllResponseMap.get(limitBy)?.querySnapshot;
-      //   querySnapshot = lastQuerySnapshot!;
-
-      //   this.#latestGetAllResponseMap.set(limitBy, {
-      //     querySnapshot,
+      // if (querySnapshot) {
+      //   querySnapshot.forEach((doc: DocumentSnapshot<DocumentData>) => {
+      //     const itemData = {
+      //       id: doc.id,
+      //       ...doc.data(),
+      //     };
+      //     const item = new this.DocumentDto(itemData);
+      //     items.push(item);
       //   });
       // }
 
-      if (querySnapshot) {
-        querySnapshot.forEach((doc: DocumentSnapshot<DocumentData>) => {
-          const itemData = {
-            id: doc.id,
-            ...doc.data(),
-          };
-          const item = new this.DocumentDto(itemData);
-          items.push(item);
-        });
-      }
-
       return { data: items, error: null };
     } catch (error) {
+      console.log("get all error:");
       console.log(error);
       // const errorPayload = JSON.parse(
       //   JSON.stringify(error, Object.getOwnPropertyNames(error))
@@ -437,7 +423,7 @@ class FirestoreService<FirestoreDocument> {
       // await this.#logError({ type: "FirebaseError", payload: errorPayload });
 
       // throw error;
-      return { data: null, error: true };
+      return { data: [], error: true };
     }
   };
 
@@ -462,7 +448,7 @@ class FirestoreService<FirestoreDocument> {
 
   create = async (
     item: FirestoreDocument
-  ): Promise<PromiseResponse<FirestoreDocument>> => {
+  ): Promise<PromiseResponse<FirestoreDocument | null>> => {
     try {
       // const app = getApp();
       // this.firestore = getFirestore(app);

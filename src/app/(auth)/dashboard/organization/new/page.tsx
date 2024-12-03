@@ -33,7 +33,7 @@ export default function NewProjectPage() {
         if (Boolean(error)) {
           alert(error);
         } else {
-          // queryClient.invalidateQueries(QUERY_KEYS.getAllProjects);
+          queryClient.invalidateQueries(QUERY_KEYS.getAllOrganizations);
           router.replace(PATHS.dashboardPath);
         }
       },

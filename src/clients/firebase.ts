@@ -1,6 +1,16 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { browserSessionPersistence, initializeAuth } from "firebase/auth";
+import {
+  browserSessionPersistence,
+  initializeAuth,
+  connectAuthEmulator,
+} from "firebase/auth";
+import {
+  initializeFirestore,
+  connectFirestoreEmulator,
+} from "firebase/firestore";
+
+import { isDevEnv } from "utils/env";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,5 +30,11 @@ const auth = initializeAuth(app, {
   persistence: browserSessionPersistence,
   popupRedirectResolver: undefined,
 });
+const db = initializeFirestore(app, { ignoreUndefinedProperties: true });
 
-export { app, auth };
+if (isDevEnv()) {
+  connectAuthEmulator(auth, "http://127.0.0.1:9099");
+  connectFirestoreEmulator(db, "127.0.0.1", 8080);
+}
+
+export { app, auth, db };

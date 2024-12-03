@@ -5,7 +5,7 @@ class ProjectDto extends BaseDto {
   id?: string | null;
   name: string | undefined;
   description?: string | null;
-  organizations?: string;
+  organizationId?: string;
 
   constructor(data: ProjectDto) {
     super(data);
