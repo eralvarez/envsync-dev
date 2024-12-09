@@ -10,8 +10,9 @@ import FormFactory from "components/FormFactory";
 import { useRouter } from "next/navigation";
 import PATHS from "constants/paths";
 import QUERY_KEYS from "constants/queryKeys";
-import OrganizationService, {
-  OrganizationDto,
+import {
+  OrganizationService,
+  Organization,
 } from "services/OrganizationService";
 import { useAuth } from "contexts/AuthContext";
 
@@ -31,7 +32,9 @@ export default function NewProjectPage() {
     {
       onSuccess: ({ data, error }) => {
         if (Boolean(error)) {
-          alert(error);
+          console.log("ERROR ADDING");
+          console.log({ data, error });
+          // alert(error);
         } else {
           queryClient.invalidateQueries(QUERY_KEYS.getAllOrganizations);
           router.replace(PATHS.dashboardPath);
@@ -46,7 +49,7 @@ export default function NewProjectPage() {
     },
     validationSchema,
     onSubmit: (formData) => {
-      const newOrganization = new OrganizationDto({
+      const newOrganization = new Organization({
         ...formData,
         members: [user?.uid as string],
       });

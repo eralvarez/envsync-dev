@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { Button, Stack, Box } from "@mui/material";
@@ -11,17 +12,21 @@ import FormFactory from "components/FormFactory";
 import { useRouter } from "next/navigation";
 import PATHS from "constants/paths";
 import QUERY_KEYS from "constants/queryKeys";
-import ProjectService, { ProjectDto } from "services/ProjectService";
-import { useRef } from "react";
+import { Project, ProjectService } from "services/ProjectService";
+import { useOrganization } from "state/organizations";
 
 const validationSchema = yup.object({
   name: yup.string().required(),
   description: yup.string(),
 });
 
-const projectService = new ProjectService();
-
 export default function NewProjectPage() {
+  const { selectedOrganization } = useOrganization();
+  const { current: projectService } = useRef(
+    new ProjectService({
+      organizationId: selectedOrganization?.id as string,
+    })
+  );
   // const { current: projectService } = useRef(new ProjectService());
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -47,7 +52,7 @@ export default function NewProjectPage() {
     },
     validationSchema,
     onSubmit: (formData) => {
-      const newProject = new ProjectDto(formData);
+      const newProject = new Project(formData);
       createProjectMutation(newProject);
     },
   });

@@ -2,7 +2,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import AddIcon from "@mui/icons-material/Add";
 
 import { Navigation } from "types/toolpad";
-import PATHS from "constants/paths";
+import { PATHS } from "constants/paths";
 
 const navigation: Navigation[] = [
   {
@@ -35,3 +35,4 @@ const navigation: Navigation[] = [
 ];
 
 export default navigation;
+export { navigation };
