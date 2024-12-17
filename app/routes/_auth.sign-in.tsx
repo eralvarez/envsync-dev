@@ -1,5 +1,3 @@
-// "use client";
-
 import * as yup from "yup";
 import { useFormik } from "formik";
 import {
@@ -12,18 +10,15 @@ import {
 } from "@mui/material";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router";
-// import { useRouter } from "next/navigation";
 
-import FormFactory from "components/FormFactory";
-import PATHS from "constants/paths";
-import AuthService from "services/AuthService";
+// import FormFactory from "components/FormFactory";
+import { PATHS } from "constants/paths";
+import { authService } from "services";
 
 const validationSchema = yup.object({
-email: yup.string().email().required(),
+  email: yup.string().email().required(),
   password: yup.string().required(),
 });
-
-const authService = new AuthService();
 
 export default function SignInPage() {
   const navigate = useNavigate();
@@ -35,7 +30,8 @@ export default function SignInPage() {
         if (Boolean(error)) {
           alert("wrong creds, try again");
         } else {
-          navigate(PATHS.dashboardPath);
+          alert("yay");
+          // navigate(PATHS.dashboardPath);
         }
       },
     }
@@ -79,7 +75,7 @@ export default function SignInPage() {
             </Typography>
 
             <Stack>
-              <FormFactory
+              {/* <FormFactory
                 inputConfigs={[
                   {
                     name: "email",
@@ -94,7 +90,7 @@ export default function SignInPage() {
                 ]}
                 formik={formik}
                 validationSchema={validationSchema}
-              />
+              /> */}
 
               <Stack direction="column" gap={1}>
                 <Button

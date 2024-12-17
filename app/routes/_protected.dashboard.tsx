@@ -1,4 +1,3 @@
-// import { Welcome } from "components/welcome/welcome";
 import { Outlet } from "react-router";
 
 export default function DashboardLayout() {

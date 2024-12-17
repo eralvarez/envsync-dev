@@ -1,4 +1,3 @@
-"use client";
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
@@ -7,7 +6,7 @@ const theme = createTheme({
   },
   colorSchemes: { light: true, dark: true },
   typography: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Arial",
   },
   components: {
     MuiButton: {

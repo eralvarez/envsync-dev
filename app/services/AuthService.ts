@@ -8,12 +8,12 @@ import {
   AuthErrorCodes,
 } from "firebase/auth";
 
-import { PromiseResponse } from "types/promiseResponse";
+import type { PromiseResponse } from "types/promiseResponse";
 
 class AuthService {
   constructor() {}
 
-  private getErrorMessage(error: { code: string; message: string }) {
+  private getErrorMessage = (error: { code: string; message: string }) => {
     let errorMessage = "";
 
     switch (error.code) {
@@ -22,6 +22,9 @@ class AuthService {
         break;
       case AuthErrorCodes.WEAK_PASSWORD:
         errorMessage = "Weak password";
+        break;
+      case "app/no-app":
+        errorMessage = "No app";
         break;
 
       default:
@@ -37,12 +40,12 @@ class AuthService {
     console.log({ errorCode: error.code, errorMessage });
 
     return errorMessage;
-  }
+  };
 
-  async signUp(signUpForm: {
+  signUp = async (signUpForm: {
     email: string;
     password: string;
-  }): Promise<PromiseResponse<User>> {
+  }): Promise<PromiseResponse<User | null>> => {
     try {
       const auth = getAuth();
       const { user } = await createUserWithEmailAndPassword(
@@ -61,12 +64,12 @@ class AuthService {
 
       return { data: null, error: errorMessage };
     }
-  }
+  };
 
-  async signIn(signInForm: {
+  signIn = async (signInForm: {
     email: string;
     password: string;
-  }): Promise<PromiseResponse> {
+  }): Promise<PromiseResponse> => {
     try {
       const auth = getAuth();
       await signInWithEmailAndPassword(
@@ -88,9 +91,9 @@ class AuthService {
 
       return { data: null, error: errorMessage };
     }
-  }
+  };
 
-  async signOut(): Promise<PromiseResponse> {
+  signOut = async (): Promise<PromiseResponse> => {
     try {
       const auth = getAuth();
       await signOut(auth);
@@ -108,7 +111,7 @@ class AuthService {
 
       return { data: null, error: errorMessage };
     }
-  }
+  };
 }
 
-export default AuthService;
+export { AuthService };

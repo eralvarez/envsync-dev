@@ -7,11 +7,11 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import type { Route } from "./+types/root";
-// import stylesheet from "./app.css?url";
 import { theme } from "constants/theme";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import "clients/firebase";
 
 const queryClient = new QueryClient();
 

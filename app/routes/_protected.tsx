@@ -1,6 +1,6 @@
 import { Outlet, Navigate, useLocation } from "react-router";
 
-export default function AuthLayout() {
+export default function ProtectedLayout() {
   const location = useLocation();
 
   if (true && location.pathname === "/") {
@@ -8,8 +8,8 @@ export default function AuthLayout() {
   }
 
   return (
-    <div id="AuthLayout">
-      <span>Auth layout</span>
+    <div id="ProtectedLayout">
+      <span>Protected layout</span>
       <Outlet />
     </div>
   );
