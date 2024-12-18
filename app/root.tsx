@@ -7,11 +7,14 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+// import { CssBaseline, ThemeProvider } from "@mui/material/";
+// import ThemeProvider from "@mui/material/ThemeProvider";
+// import ThemeProvider from "@mui/s";
 
 import type { Route } from "./+types/root";
 import { theme } from "constants/theme";
 import "clients/firebase";
+import ThemeProvider from "@mui/material/styles/ThemeProvider";
 
 const queryClient = new QueryClient();
 
@@ -40,7 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ThemeProvider theme={theme}>
-          <CssBaseline />
+          {/* <CssBaseline /> */}
           {/* <AuthContext> */}
           <QueryClientProvider client={queryClient}>
             {children}

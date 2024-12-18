@@ -1,13 +1,13 @@
 import * as yup from "yup";
 import { useFormik } from "formik";
-import {
-  Button,
-  Stack,
-  Typography,
-  Card,
-  CardContent,
-  Box,
-} from "@mui/material";
+// import {
+//   Button,
+//   Stack,
+//   Typography,
+//   Card,
+//   CardContent,
+//   Box,
+// } from "@mui/material";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router";
 
@@ -48,71 +48,70 @@ export default function SignInPage() {
     },
   });
 
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <Card
-        elevation={4}
-        sx={(theme) => ({
-          width: 380,
+  return null;
+  // <Box
+  //   sx={{
+  //     display: "flex",
+  //     justifyContent: "center",
+  //     alignItems: "center",
+  //     height: "100vh",
+  //   }}
+  // >
+  //   <Card
+  //     elevation={4}
+  //     sx={(theme) => ({
+  //       width: 380,
 
-          [theme.breakpoints.down("sm")]: {
-            width: "100%",
-            marginX: 2,
-          },
-        })}
-      >
-        <CardContent>
-          <Stack direction="column" spacing={2}>
-            <Typography variant="h4" align="center">
-              Sign in
-            </Typography>
+  //       [theme.breakpoints.down("sm")]: {
+  //         width: "100%",
+  //         marginX: 2,
+  //       },
+  //     })}
+  //   >
+  //     <CardContent>
+  //       <Stack direction="column" spacing={2}>
+  //         <Typography variant="h4" align="center">
+  //           Sign in
+  //         </Typography>
 
-            <Stack>
-              {/* <FormFactory
-                inputConfigs={[
-                  {
-                    name: "email",
-                    type: "email",
-                    label: "Email",
-                  },
-                  {
-                    name: "password",
-                    type: "password",
-                    label: "Password",
-                  },
-                ]}
-                formik={formik}
-                validationSchema={validationSchema}
-              /> */}
+  //         <Stack>
+  //           {/* <FormFactory
+  //             inputConfigs={[
+  //               {
+  //                 name: "email",
+  //                 type: "email",
+  //                 label: "Email",
+  //               },
+  //               {
+  //                 name: "password",
+  //                 type: "password",
+  //                 label: "Password",
+  //               },
+  //             ]}
+  //             formik={formik}
+  //             validationSchema={validationSchema}
+  //           /> */}
 
-              <Stack direction="column" gap={1}>
-                <Button
-                  variant="contained"
-                  type="button"
-                  onClick={formik.submitForm}
-                  disabled={isLoading}
-                >
-                  Sign in
-                </Button>
-                <Button disabled={isLoading}>Forgot Password?</Button>
-                <Button
-                  disabled={isLoading}
-                  onClick={() => navigate(PATHS.signUpPath)}
-                >
-                  Don&apos;t have an account? Sign up
-                </Button>
-              </Stack>
-            </Stack>
-          </Stack>
-        </CardContent>
-      </Card>
-    </Box>
-  );
+  //           <Stack direction="column" gap={1}>
+  //             <Button
+  //               variant="contained"
+  //               type="button"
+  //               onClick={formik.submitForm}
+  //               disabled={isLoading}
+  //             >
+  //               Sign in
+  //             </Button>
+  //             <Button disabled={isLoading}>Forgot Password?</Button>
+  //             <Button
+  //               disabled={isLoading}
+  //               onClick={() => navigate(PATHS.signUpPath)}
+  //             >
+  //               Don&apos;t have an account? Sign up
+  //             </Button>
+  //           </Stack>
+  //         </Stack>
+  //       </Stack>
+  //     </CardContent>
+  //   </Card>
+  // </Box>
 }

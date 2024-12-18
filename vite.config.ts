@@ -10,4 +10,12 @@ export default defineConfig({
     },
   },
   plugins: [reactRouter(), tsconfigPaths()],
+  optimizeDeps: {
+    force: true,
+    esbuildOptions: {
+      loader: {
+        ".js": "jsx",
+      },
+    },
+  },
 });
