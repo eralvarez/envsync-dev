@@ -29,36 +29,55 @@ import { isDevEnv } from "utils/env";
 // import supabase from "utils/supabase/client";
 // import Link from "next/link";
 
-type InputType =
-  | "text"
-  | "textarea"
-  | "select"
-  | "datetime"
-  | "file"
-  | "boolean"
-  | "password"
-  | "email";
+type InputType = "text" | "textarea" | "select" | "datetime" | "file" | "boolean" | "password" | "email";
+
+// enum InputTypeEnum {
+//   text = "text",
+//   textarea = "textarea",
+//   select = "select",
+//   datetime = "datetime",
+//   file = "file",
+//   boolean = "boolean",
+//   password = "password",
+//   email = "email",
+// }
 
 interface SelectOptions {
   id: string;
   label: string;
 }
 
-interface InputConfig {
-  type: InputType;
+interface BaseInputConfig {
   label: string;
   name: string;
   helperText?: string;
   placeholder?: string;
-  options?: SelectOptions[];
   enabled?: boolean;
-  doneText?: string;
-  cancelText?: string;
-  datetimePresentation?: "time" | "date";
-  file?: {
-    accept: string;
-  };
 }
+
+// interface InputConfig {
+//   type: InputType;
+//   label: string;
+//   name: string;
+//   helperText?: string;
+//   placeholder?: string;
+//   options?: SelectOptions[];
+//   enabled?: boolean;
+//   doneText?: string;
+//   cancelText?: string;
+//   datetimePresentation?: "time" | "date";
+//   file?: {
+//     accept: string;
+//   };
+// }
+type InputConfig =
+  | ({
+      type: "text" | "textarea" | "email" | "password" | "boolean" | "datetime" | "file";
+    } & BaseInputConfig)
+  | ({
+      type: "select";
+      options: SelectOptions[];
+    } & BaseInputConfig);
 
 interface FormProps {
   inputConfigs: InputConfig[];
@@ -68,12 +87,7 @@ interface FormProps {
   // stackProps?: StackProps;
 }
 
-export default function FormFactory({
-  inputConfigs,
-  formik,
-  validationSchema,
-  onChange,
-}: Readonly<FormProps>) {
+function FormFactory({ inputConfigs, formik, validationSchema, onChange }: Readonly<FormProps>) {
   // const handleFileChange = async (
   //   event: React.ChangeEvent<HTMLInputElement>,
   //   field: string
@@ -102,13 +116,9 @@ export default function FormFactory({
   // };
 
   const getElement = (inputConfig: InputConfig) => {
-    const isRequired =
-      ((validationSchema?.describe().fields[inputConfig.name] as any)
-        .optional ?? false) === false;
-    const hasError =
-      (formik.touched[inputConfig.name] &&
-        Boolean(formik.errors[inputConfig.name])) ??
-      false;
+    // console.log({ validationSchema });
+    const isRequired = ((validationSchema?.describe().fields[inputConfig.name] as any).optional ?? false) === false;
+    const hasError = (formik.touched[inputConfig.name] && Boolean(formik.errors[inputConfig.name])) ?? false;
 
     switch (inputConfig.type) {
       case "text": {
@@ -147,9 +157,7 @@ export default function FormFactory({
                 formHelperText: { sx: { marginLeft: 0 } },
               }}
               helperText={
-                hasError
-                  ? (formik.errors[inputConfig.name] as string) ?? ""
-                  : inputConfig.helperText ?? ""
+                hasError ? ((formik.errors[inputConfig.name] as string) ?? "") : (inputConfig.helperText ?? "")
               }
               error={hasError}
             />
@@ -184,9 +192,7 @@ export default function FormFactory({
                 formHelperText: { sx: { marginLeft: 0 } },
               }}
               helperText={
-                hasError
-                  ? (formik.errors[inputConfig.name] as string) ?? ""
-                  : inputConfig.helperText ?? ""
+                hasError ? ((formik.errors[inputConfig.name] as string) ?? "") : (inputConfig.helperText ?? "")
               }
               error={hasError}
             />
@@ -221,9 +227,7 @@ export default function FormFactory({
                 formHelperText: { sx: { marginLeft: 0 } },
               }}
               helperText={
-                hasError
-                  ? (formik.errors[inputConfig.name] as string) ?? ""
-                  : inputConfig.helperText ?? ""
+                hasError ? ((formik.errors[inputConfig.name] as string) ?? "") : (inputConfig.helperText ?? "")
               }
               error={hasError}
             />
@@ -289,9 +293,7 @@ export default function FormFactory({
                 formHelperText: { sx: { marginLeft: 0 } },
               }}
               helperText={
-                hasError
-                  ? (formik.errors[inputConfig.name] as string) ?? ""
-                  : inputConfig.helperText ?? ""
+                hasError ? ((formik.errors[inputConfig.name] as string) ?? "") : (inputConfig.helperText ?? "")
               }
               error={hasError}
             />
@@ -301,8 +303,7 @@ export default function FormFactory({
         return (
           <label className="block" key={inputConfig.label}>
             <span className="text-gray-700">
-              {inputConfig.label}{" "}
-              {isRequired && <span className="text-red-500 text-md">*</span>}
+              {inputConfig.label} {isRequired && <span className="text-red-500 text-md">*</span>}
             </span>
 
             <input
@@ -344,8 +345,7 @@ export default function FormFactory({
         return (
           <label className="block" key={inputConfig.label}>
             <span className="text-gray-700">
-              {inputConfig.label}{" "}
-              {isRequired && <span className="text-red-500 text-md">*</span>}
+              {inputConfig.label} {isRequired && <span className="text-red-500 text-md">*</span>}
             </span>
 
             <select
@@ -372,16 +372,13 @@ export default function FormFactory({
               ))}
             </select>
 
-            {formik.touched[inputConfig.name] &&
-              Boolean(formik.errors[inputConfig.name]) && (
-                <>
-                  {typeof formik.errors[inputConfig.name] === "string" ? (
-                    <span className="text-sm text-red-500">
-                      {formik.errors[inputConfig.name] as string}
-                    </span>
-                  ) : null}
-                </>
-              )}
+            {formik.touched[inputConfig.name] && Boolean(formik.errors[inputConfig.name]) && (
+              <>
+                {typeof formik.errors[inputConfig.name] === "string" ? (
+                  <span className="text-sm text-red-500">{formik.errors[inputConfig.name] as string}</span>
+                ) : null}
+              </>
+            )}
           </label>
         );
         // return null;
@@ -603,15 +600,14 @@ export default function FormFactory({
   };
 
   return (
-    <Stack
-      data-testid="formFactory"
-      direction="column"
-      gap={2}
-      sx={{ marginBottom: 2 }}
-    >
+    <Stack data-testid="formFactory" direction="column" gap={2} sx={{ marginBottom: 2 }}>
       {inputConfigs.map((inputConfig) => getElement(inputConfig))}
 
       {isDevEnv() ? <pre>{JSON.stringify(formik.values, null, 2)}</pre> : null}
     </Stack>
   );
 }
+
+export default FormFactory;
+
+export type { InputType, SelectOptions, InputConfig, FormProps };

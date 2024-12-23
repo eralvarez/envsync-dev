@@ -28,10 +28,19 @@ import {
   CollectionReference,
 } from "firebase/firestore";
 import { has, get } from "lodash";
+import * as yup from "yup";
+
+import { FormService } from "services/FormService";
 import { PromiseResponse } from "types/promiseResponse";
-import { ObjectSchema, ValidationError, date as yupDate } from "yup";
+import { ClassRef } from "types/class";
+// import { ObjectSchema, ValidationError, date as yupDate } from "yup";
 
 // type FirestoreEnvironment = "dev" | "stage" | "prod";
+
+// import { CREATE_METADATA_KEY, UPDATE_METADATA_KEY, BaseFieldConfig } from "decorators/firestore";
+
+// const createMetadataKey = Symbol.for("createMetadata");
+// const updateMetadataKey = Symbol.for("updateMetadata");
 
 type WhereConditions<T> =
   | [keyof T, WhereFilterOp, keyof T]
@@ -70,9 +79,9 @@ interface GetAllProps<T> extends GetProps<T> {
 //   // logErrorCollection?: string;
 // }
 
-type ClassRef = new (...args: any[]) => any;
+// type ClassRef = new (...args: any[]) => any;
 
-class FirestoreService<FirestoreDocument> {
+class FirestoreService<FirestoreDocument> extends FormService {
   private collectionName: string = "";
   private DocumentDto: ClassRef;
   // #logErrorModelName = "";
@@ -98,6 +107,7 @@ class FirestoreService<FirestoreDocument> {
     collectionName: string;
     DocumentDto: ClassRef;
   }) {
+    super();
     // this.collectionName = collectionName;
     this.collectionName = collectionName;
     // console.log({ collectionName: this.collectionName });
@@ -227,9 +237,7 @@ class FirestoreService<FirestoreDocument> {
   //   return unsubscribe;
   // }
 
-  getById = async (
-    id: string
-  ): Promise<PromiseResponse<FirestoreDocument | null>> => {
+  getById = async (id: string): Promise<PromiseResponse<FirestoreDocument | null>> => {
     try {
       const docRef = doc(this.firestore, this.collectionName, id);
       const item = await getDoc(docRef);
@@ -248,12 +256,10 @@ class FirestoreService<FirestoreDocument> {
     }
   };
 
-  getAll = async (
-    props?: GetAllProps<FirestoreDocument>
-  ): Promise<PromiseResponse<FirestoreDocument[]>> => {
+  getAll = async (props?: GetAllProps<FirestoreDocument>): Promise<PromiseResponse<FirestoreDocument[]>> => {
     try {
       // console.group("getAll");
-      console.log(this.collectionName);
+      // console.log(this.collectionName);
 
       const whereConditions = props?.whereConditions || [];
       // const limitBy = props?.limitBy;
@@ -261,9 +267,7 @@ class FirestoreService<FirestoreDocument> {
       // const showDeleted = props?.showDeleted || false;
 
       // const items: FirestoreDocument[] = [];
-      let collectionRef = query(
-        collection(this.firestore, this.collectionName)
-      );
+      let collectionRef = query(collection(this.firestore, this.collectionName));
       // let collectionRef = query(modelRef, orderBy("createdAt", "desc"));
 
       // if (limitBy !== undefined) {
@@ -275,14 +279,7 @@ class FirestoreService<FirestoreDocument> {
       // }
 
       whereConditions.forEach((whereCondition) => {
-        collectionRef = query(
-          collectionRef,
-          where(
-            whereCondition[0] as string,
-            whereCondition[1],
-            whereCondition[2]
-          )
-        );
+        collectionRef = query(collectionRef, where(whereCondition[0] as string, whereCondition[1], whereCondition[2]));
       });
       // https://firebase.google.com/docs/firestore/query-data/queries#or_queries
       // const querySnapshot = await getDocs(queryRef);
@@ -334,9 +331,7 @@ class FirestoreService<FirestoreDocument> {
   //   }
   // }
 
-  create = async (
-    item: FirestoreDocument
-  ): Promise<PromiseResponse<FirestoreDocument | null>> => {
+  create = async (item: FirestoreDocument): Promise<PromiseResponse<FirestoreDocument | null>> => {
     try {
       // const app = getApp();
       // this.firestore = getFirestore(app);
