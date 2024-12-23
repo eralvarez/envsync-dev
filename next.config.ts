@@ -2,19 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: "export",
+  distDir: "build",
+  reactStrictMode: true,
   images: {
-    dangerouslyAllowSVG: true,
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-        port: "",
-        pathname: "/**",
-      },
-    ],
-  },
-  experimental: {
-    // typedRoutes: true,
+    unoptimized: true,
   },
 };
 

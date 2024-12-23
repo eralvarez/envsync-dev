@@ -1,8 +1,12 @@
-const paths = {
+const PATHS = {
+  homePath: "/",
   dashboardPath: "/dashboard",
   dashboard: "dashboard",
   newProjectPath: "/dashboard/project/new",
   newProject: "dashboard/project/new",
+  project: "dashboard/project",
+  newOrganizationPath: "/dashboard/organization/new",
+  newOrganization: "dashboard/organization/new",
   newEnv: "new/env",
   signInPath: "/sign-in",
   signIn: "sign-in",
@@ -14,4 +18,4 @@ const paths = {
   resetPassword: "forgot-password",
 } as const;
 
-export default paths;
+export { PATHS };

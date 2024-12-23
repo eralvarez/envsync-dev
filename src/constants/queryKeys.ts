@@ -1,6 +1,8 @@
-const queryKeys = {
+const QUERY_KEYS = {
   getAllProjects: "getAllProjects",
   getAllProjectEnvVars: "getAllProjectEnvVars",
+  getAllOrganizations: "getAllOrganizations",
 } as const;
 
-export default queryKeys;
+export default QUERY_KEYS;
+export { QUERY_KEYS };
